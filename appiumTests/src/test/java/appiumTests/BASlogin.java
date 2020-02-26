@@ -126,6 +126,8 @@ public class BASlogin {
 		MobileElement loginLogo = driver.findElement(By.id("com.bastrucks.worldapp.staging:id/textview_login_info1"));
 		String loginscreen = loginLogo.getText();
 		System.out.println("You are on login screen with label " + loginscreen);
+		System.out.println("You have successfully logged in and logged out");
+		
 		
 	}
     
