@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.aspectj.lang.annotation.Before;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -20,28 +21,18 @@ import io.appium.java_client.TouchAction;
 import java.time.Duration;
 import static io.appium.java_client.touch.offset.PointOption.point;
 import static io.appium.java_client.touch.WaitOptions.*;
+import org.openqa.selenium.support.ui.Wait;
 
 public class BASlogin {
 	
 	//Webdriver driver;
 	static AppiumDriver<MobileElement> driver;
+	
 	//AndroidDriver
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MalformedURLException, InterruptedException {
 		// TODO Auto-generated method stub
 		
-		try {
-			basworld();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println(e.getCause());
-			System.out.println(e.getMessage());
-		}
-		
-	}
-
-	public static void basworld() throws MalformedURLException, InterruptedException {
-		// TODO Auto-generated method stub
 		
 		DesiredCapabilities cap = new DesiredCapabilities();
 		
@@ -60,13 +51,29 @@ public class BASlogin {
 		
 		System.out.println("App Started");
 		
+		basworld();
+		
+		
+	}
+	
+	public static void basworld() throws MalformedURLException, InterruptedException {
+		// TODO Auto-generated method stub
+		
+		
+		
 		//Adding wait to load the app after splash
-		driver.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+		//driver.manage().timeouts().implicitlyWait(15,TimeUnit.SECONDS);
+		
+		WebDriverWait wait = new WebDriverWait(driver,20);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.HorizontalScrollView/android.widget.LinearLayout/androidx.appcompat.app.ActionBar.Tab[5]")));
 		
 		//Opening login screen
 		MobileElement myBAS = driver.findElement(By.xpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.HorizontalScrollView/android.widget.LinearLayout/androidx.appcompat.app.ActionBar.Tab[5]"));
 		myBAS.click();
 		
+		
+		// adding wait for the email field to show
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.bastrucks.worldapp.staging:id/edittext_login_email")));
 				
 		//entering credentials
 		MobileElement email = driver.findElement(By.id("com.bastrucks.worldapp.staging:id/edittext_login_email"));
@@ -78,21 +85,21 @@ public class BASlogin {
 		MobileElement loginButton = driver.findElement(By.id("com.bastrucks.worldapp.staging:id/button_login_login"));
 		loginButton.click();
 		
+		
+		//verifying the login screen
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.bastrucks.worldapp.staging:id/textview_header_welcome")));
 		String welcomeText = driver.findElement(By.id("com.bastrucks.worldapp.staging:id/textview_header_welcome")).getText();
 		System.out.println("Logged in with " + welcomeText);
 		
-		//Logout
-		myBAS.click();
-		WebDriverWait wait = new WebDriverWait(driver,20);
 		
-		/*wait.until(ExpectedConditions.visibilityOfElementLocated(locator)
-
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("about_me")));
-*/		
+		//opening the account settings
+		
+		myBAS.click();
+				
 		MobileElement myAccount = driver.findElement(By.id("com.bastrucks.worldapp.staging:id/action_settings"));
 		myAccount.click();
 		
-		Thread.sleep(3000);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.bastrucks.worldapp.staging:id/textview_myaccount_editaccountdetails")));
 		
 		//TouchAction action = new TouchAction(driver);
 		
@@ -106,22 +113,22 @@ public class BASlogin {
 		logout.click();
 		
 		
-		Thread.sleep(2000);
+		wait.until(ExpectedConditions.alertIsPresent());
 		
 		//wait.until(ExpectedConditions.alertIsPresent());
 		Alert alert = driver.switchTo().alert();
 		alert.dismiss(); 
 		System.out.println("log out cancelled");
 		
-		Thread.sleep(5000);
+		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.id("com.bastrucks.worldapp.staging:id/textview_myaccount_logout")));
 		
 		logout.click();
-		Thread.sleep(3000);
+		
+		wait.until(ExpectedConditions.alertIsPresent());
 		alert.accept();
 		System.out.println("logged out");
-		
-		
-		Thread.sleep(3000);
+			
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.bastrucks.worldapp.staging:id/textview_login_info1")));
 		
 		MobileElement loginLogo = driver.findElement(By.id("com.bastrucks.worldapp.staging:id/textview_login_info1"));
 		String loginscreen = loginLogo.getText();
